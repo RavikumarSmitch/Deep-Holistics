@@ -1,42 +1,48 @@
 pipeline {
     agent any
-
+    parameters {
+        choice(name: 'ENVIRONMENT', choices: ['DEV', 'STAGING', 'PROD'], description: 'Select the environment to deploy to')
+    }
     stages {
+        stage('Preparation') {
+            steps {
+                echo 'Preparing for deployment...'
+            }
+        }
         stage('DEV') {
+            when {
+                expression { params.ENVIRONMENT == 'DEV' }
+            }
             steps {
-                echo 'DEV...'
-                // Here you would add the commands to compile/build your project
-                // For example: sh 'make'
+                echo 'Deploying to DEV environment...'
+                sh 'echo Hello Jenkins DEV!'
+                // Add your DEV deployment steps here
             }
         }
-
-        stage('Test') {
+        stage('STAGING') {
+            when {
+                expression { params.ENVIRONMENT == 'STAGING' }
+            }
             steps {
-                echo 'Testing...'
-                // Commands to run tests go here
-                // For example: sh 'make test'
+                echo 'Deploying to STAGING environment...'
+                sh 'echo Hello Jenkins STAGING!'
+                // Add your STAGING deployment steps here
             }
         }
-
-        stage('Prod') {
+        stage('PROD') {
+            when {
+                expression { params.ENVIRONMENT == 'PROD' }
+            }
             steps {
-                echo 'Deploying...'
-                // Deployment commands go here
-                // For example: sh 'make deploy'
+                echo 'Deploying to PROD environment...'
+                sh 'echo Hello Jenkins PROD!'
+                // Add your PROD deployment steps here
             }
         }
     }
-
     post {
         always {
-            echo 'Cleaning up...'
-            // Any cleanup tasks can be added here
-        }
-        success {
-            echo 'Build was successful!'
-        }
-        failure {
-            echo 'Build failed.'
+            echo 'Pipeline completed.'
         }
     }
 }
