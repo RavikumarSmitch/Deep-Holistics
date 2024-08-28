@@ -1,48 +1,42 @@
 pipeline {
     agent any
-    parameters {
-        choice(name: 'ENVIRONMENT', choices: ['DEV', 'STAGING', 'PROD'], description: 'Select the environment to deploy to')
-    }
+
     stages {
-        stage('Preparation') {
-            steps {
-                echo 'Preparing for deployment...'
-            }
-        }
         stage('DEV') {
-            when {
-                expression { params.ENVIRONMENT == 'DEV' }
-            }
             steps {
-                echo 'Deploying to DEV environment...'
-                sh 'echo Hello Jenkins DEV!'
-                // Add your DEV deployment steps here
+                echo 'DEV...'
+                // Here you would add the commands to compile/build your project
+                // For example: sh 'make'
             }
         }
-        stage('STAGING') {
-            when {
-                expression { params.ENVIRONMENT == 'STAGING' }
-            }
+
+        stage('Test') {
             steps {
-                echo 'Deploying to STAGING environment...'
-                sh 'echo Hello Jenkins STAGING!'
-                // Add your STAGING deployment steps here
+                echo 'Testing...'
+                // Commands to run tests go here
+                // For example: sh 'make test'
             }
         }
-        stage('PROD') {
-            when {
-                expression { params.ENVIRONMENT == 'PROD' }
-            }
+
+        stage('Prod') {
             steps {
-                echo 'Deploying to PROD environment...'
-                sh 'echo Hello Jenkins PROD!'
-                // Add your PROD deployment steps here
+                echo 'Deploying...'
+                // Deployment commands go here
+                // For example: sh 'make deploy'
             }
         }
     }
+
     post {
         always {
-            echo 'Pipeline completed.'
+            echo 'Cleaning up...'
+            // Any cleanup tasks can be added here
+        }
+        success {
+            echo 'Build was successful!'
+        }
+        failure {
+            echo 'Build failed.'
         }
     }
 }
